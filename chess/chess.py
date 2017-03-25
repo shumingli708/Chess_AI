@@ -11,10 +11,10 @@ class chess(object):
 #     def board(self):
         x = ['a','b','c','d','e','f','g','h']
         y = ['1','2','3','4','5','6','7','8']
-        W_Pawn = ['P1','P2','P3','P4','P5','P6','P7','P8']
-        W_peceis = ['R1','H1','B1','Q1','K1','B2','H2','R2']
-        B_Pawn = ['p1','p2','p3','p4','p5','p6','p7','p8']
-        B_peceis =  ['r1','h1','b1','q1','k1','b2','h2','r2']
+        B_Pawn = ['P']
+        B_peceis = ['R','N','B','Q','K','B','N','R']
+        W_Pawn = ['p']
+        W_peceis =  ['r','n','b','q','k','b','n','r']
         self.df = pd.DataFrame('-', index=[1,2,3,4,5,6,7,8], columns=['a','b','c','d','e','f','g','h'])
         self.df.loc[1] = B_peceis
         self.df.loc[2] = B_Pawn
@@ -22,13 +22,20 @@ class chess(object):
         self.df.loc[8] = W_peceis
 #         return df
     
-    def show_board(self):
+    def show_df(self):
         return(self.df)
+    def show_board(self):
+        fake_board = pd.DataFrame('-', index=[1,2,3,4,5,6,7,8], columns=['a','b','c','d','e','f','g','h'])
+        uni_pieces = {'-':'·','R':'♜', 'N':'♞', 'B':'♝', 'Q':'♛', 'K':'♚','P':'♟','r':'♖', 'n':'♘', 'b':'♗', 'q':'♕', 'k':'♔', 'p':'♙'}
+        for col in self.df.columns:
+            for j in range(1,len(self.df.columns)+1):
+                fake_board[col][j] = uni_pieces[self.df[col][j]]
+        return(fake_board)
     
     def move(self,input_str):
-        move_pe = input_str[0:2]
-        start_pos = input_str[2:4]
-        des_pos = input_str[4:6]
+        move_pe = input_str[0]
+        start_pos = input_str[1:3]
+        des_pos = input_str[3:65]
         if self.find_key(des_pos) != '-':
             self.pos_dict[self.find_key(des_pos)] = 0
         self.pos_dict[move_pe] = des_pos
@@ -56,12 +63,13 @@ class chess(object):
                 return(i)
     
     def game_WL(self):
-        if self.pos_dict['k1'] == 0:
+        if self.pos_dict['k'] == 0:
             return('While Win')
-        elif self.pos_dict['K1'] == 0:
+        elif self.pos_dict['K'] == 0:
             return('Black win')
         else:
             return(True)
+        
     def running(self,input_str):
         self.pos_dict = self.update_pos(input_str)
         self.df = self.move(input_str)
